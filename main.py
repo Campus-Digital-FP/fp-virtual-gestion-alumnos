@@ -19,6 +19,8 @@ from classes.Alumno import *
 from classes.Centro import *
 from classes.Ciclo import *
 from classes.Modulo import *
+from email.message import EmailMessage
+from email.headerregistry import Address
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -219,7 +221,7 @@ def main():
                 # Le envío email avisándolede su cambio de usuario 
                 usuario = alumnoSIGAD.getDocumento()
                 oldUsuario = alumnoMoodle['username']
-                mensaje = '''Hola,<br/><br/>su cuenta en https://{subdomain}.fpvirtualaragon.es/ se ha actualizado.<br/><br/>Su nuevo usuario es: <b>{usuario}</b> en lugar de {oldUsuario}.<br/>Su contrase&ntilde;a NO ha sido modificada.<br/><br/>Recuerde que puede recuperar su contrase&ntilde;a en cualquier momento a trav&eacute;s de https://{subdomain}.fpvirtualaragon.es/login/forgot_password.php<br/>No responda a esta cuenta de correo electr&oacute;nico pues se trata de una cuenta automatizada no atendida. En caso de cualquier problema consulte con su coordinador/a de ciclo o acuda a la secci&oacute;n de <a href="https://{subdomain}.fpvirtualaragon.es/soporte/">ayuda/incidencias</a>.<br/><br/><br/>Saludos<br/><br/>------<br/>FP virtual Arag&oacute;n{pie_email_rrss}'''.format(subdomain = SUBDOMAIN, usuario = usuario, oldUsuario = oldUsuario, pie_email_rrss = pie_email_rrss )
+                mensaje = '''Hola,<br/><br/>su cuenta en https://{subdomain}.fpvirtualaragon.es/ se ha actualizado.<br/><br/>Su nuevo usuario es: <b>{usuario}</b> en lugar de {oldUsuario}.<br/>Su contraseña NO ha sido modificada.<br/><br/>Recuerde que puede recuperar su contraseña en cualquier momento a través de https://{subdomain}.fpvirtualaragon.es/login/forgot_password.php<br/>No responda a esta cuenta de correo electrónico pues se trata de una cuenta automatizada no atendida. En caso de cualquier problema consulte con su coordinador/a de ciclo o acuda a la sección de <a href="https://{subdomain}.fpvirtualaragon.es/soporte/">ayuda/incidencias</a>.<br/><br/><br/>Saludos<br/><br/>------<br/>FP virtual Aragón{pie_email_rrss}'''.format(subdomain = SUBDOMAIN, usuario = usuario, oldUsuario = oldUsuario, pie_email_rrss = pie_email_rrss )
                 
                 destinatario = "gestion@fpvirtualaragon.es"
                 if SUBDOMAIN == "www":
@@ -344,6 +346,13 @@ def main():
                             continue
                     if not en_sigad_esta_matriculado:
                         print("En SIGAD el alumno", username, "NO está matriculado en", course_shortname, "se procede a suspender su matrícula en el curso de moodle")
+
+                        # Casos especiales de fusión de cursos de Maite
+                        # TODO Borrar el if para antes de empezar el curso 2026-2027
+                        if course_shortname == "50020125-IFC301-5061" or course_shortname == "50020125-IFC302-5077" or course_shortname == "50020125-IFC303-5092" or course_shortname == "50020125-IFC201-5001":
+                            continue;
+                        # Fin del if que haría que borrar.
+
                         suspende_matricula_en_curso(moodle, userid, courseid)
                         # NO hay que sacarlo de la cohorte, eso borra progreso
                         mensajes_email.append("- " + username + "  matricula suspendida en " + course_shortname)
@@ -365,7 +374,7 @@ def main():
     #
     csv.append("First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Password Hash Function [UPLOAD ONLY],Org Unit Path [Required],New Primary Email [UPLOAD ONLY],Recovery Email,Work Secondary Email,New Status [UPLOAD ONLY]")
     for alumno in alumnos_sigad:
-        if num_emails_enviados >= 1000: # limitacion de 2.000 emails diarios en actual cuenta de gmail
+        if num_emails_enviados >= 3: # limitacion de 2.000 emails diarios en actual cuenta de gmail
             # TODO: seguimos teniendo esta limitación en cuenta de pago?
             mensajes_email.append("<br/>")
             mensajes_email.append(" ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS ")
@@ -458,7 +467,7 @@ def main():
             nombre = return_text_for_html( alumno.getNombre() )
             apellidos = return_text_for_html( alumno.getApellidos() )
             
-            mensaje = ''' Bienvenido/a {nombre} {apellidos},<br/><br/>su cuenta se ha creado en https://{subdomain}.fpvirtualaragon.es/ y sus datos de acceso son los siguientes:<br/><br/>usuario: <b>{usuario}</b><br/>contrase&ntilde;a (es recomendable que la cambie): <b>{contrasena}</b><br><br/>Tambi&eacute;n se le crear&aacute; la cuenta <b>{email}</b> con contrase&ntilde;a (deber&aacute; cambiarla al acceder) <b>{contrasena}</b><br> Esta cuenta de correo es la que le dar&aacute; acceso a las videoconferencias de la plataforma y tambi&eacute;n a la propia plataforma. <strong>La cuenta puede tardar hasta 72 horas lectivas en estar disponible</strong>.<br/><br/>Ha sido matriculado/a en:<br/>{matriculado_en_texto}<br/><br/>Puede recuperar su contrase&ntilde;a en cualquier momento a trav&eacute;s de https://{subdomain}.fpvirtualaragon.es/login/forgot_password.php<br/>Dispone de un curso de ayuda dónde encontrar información sobre el uso de la plataforma en <a href="https://{subdomain}.fpvirtualaragon.es/course/view.php?id=2">https://{subdomain}.fpvirtualaragon.es/course/view.php?id=2</a><br/><br/>No responda a esta cuenta de correo electr&oacute;nico pues se trata de una cuenta automatizada no atendida. En caso de cualquier problema consulte con su coordinador/a de ciclo o acuda a la secci&oacute;n de <a href="https://{subdomain}.fpvirtualaragon.es/soporte/">ayuda/incidencias</a>.<br/><br/><br/>Saludos<br/><br/>------<br/>FP virtual Arag&oacute;n{pie_email_rrss}'''.format(nombre = nombre, apellidos = apellidos, subdomain = SUBDOMAIN, usuario = alumno.getDocumento().lower(), contrasena = password, matriculado_en_texto = matriculado_en_texto, pie_email_rrss = pie_email_rrss, email = alumno.getEmailDominio() )
+            mensaje = '''Bienvenido/a {nombre} {apellidos},<br/><br/>su cuenta se ha creado en https://{subdomain}.fpvirtualaragon.es/ y sus datos de acceso son los siguientes:<br/><br/>usuario: <b>{usuario}</b><br/>contraseña (es recomendable que la cambie): <b>{contrasena}</b><br><br/>También se le creará la cuenta <b>{email}</b> con contraseña (deberá cambiarla al acceder) <b>{contrasena}</b><br> Esta cuenta de correo es la que le dará acceso a las videoconferencias de la plataforma y también a la propia plataforma. <strong>La cuenta puede tardar hasta 72 horas lectivas en estar disponible</strong>.<br/><br/>Ha sido matriculado/a en:<br/>{matriculado_en_texto}<br/><br/>Puede recuperar su contraseña en cualquier momento a través de https://{subdomain}.fpvirtualaragon.es/login/forgot_password.php<br/>Dispone de un curso de ayuda dónde encontrar información sobre el uso de la plataforma en <a href="https://{subdomain}.fpvirtualaragon.es/course/view.php?id=2">https://{subdomain}.fpvirtualaragon.es/course/view.php?id=2</a><br/><br/>No responda a esta cuenta de correo electrónico pues se trata de una cuenta automatizada no atendida. En caso de cualquier problema consulte con su coordinador/a de ciclo o acuda a la sección de <a href="https://{subdomain}.fpvirtualaragon.es/soporte/">ayuda/incidencias</a>.<br/><br/><br/>Saludos<br/><br/>------<br/>FP virtual Aragón{pie_email_rrss}'''.format(nombre = nombre, apellidos = apellidos, subdomain = SUBDOMAIN, usuario = alumno.getDocumento().lower(), contrasena = password, matriculado_en_texto = matriculado_en_texto, pie_email_rrss = pie_email_rrss, email = alumno.getEmailDominio() )
             
             
             destinatario = "gestion@fpvirtualaragon.es"
@@ -482,7 +491,7 @@ def main():
                 matriculado_en_texto = "<br/>".join( map(return_text_for_html, matriculado_en) )
                 nombre = return_text_for_html( alumno.getNombre() )
                 apellidos = return_text_for_html( alumno.getApellidos() )
-                mensaje = '''Hola {nombre} {apellidos},<br/><br/>a su cuenta en https://{subdomain}.fpvirtualaragon.es/ se le han a&ntilde;adido las siguientes matr&iacute;culas:<br/><br/>{matriculado_en_texto}<br/><br/>Puede recuperar su contrase&ntilde;a en cualquier momento a trav&eacute;s de https://{subdomain}.fpvirtualaragon.es/login/forgot_password.php<br/>No responda a esta cuenta de correo electr&oacute;nico pues se trata de una cuenta automatizada no atendida. En caso de cualquier problema consulte con su coordinador/a de ciclo o acuda a la secci&oacute;n de <a href="https://{subdomain}.fpvirtualaragon.es/soporte/">ayuda/incidencias</a>.<br/><br/><br/>Saludos<br/><br/>------<br/>FP virtual Arag&oacute;n{pie_email_rrss}'''.format(nombre = nombre, apellidos = apellidos, subdomain = SUBDOMAIN, matriculado_en_texto = matriculado_en_texto, pie_email_rrss = pie_email_rrss )
+                mensaje = '''Hola {nombre} {apellidos},<br/><br/>a su cuenta en https://{subdomain}.fpvirtualaragon.es/ se le han añadido las siguientes matrículas:<br/><br/>{matriculado_en_texto}<br/><br/>Puede recuperar su contraseña en cualquier momento a través de https://{subdomain}.fpvirtualaragon.es/login/forgot_password.php<br/>No responda a esta cuenta de correo electrónico pues se trata de una cuenta automatizada no atendida. En caso de cualquier problema consulte con su coordinador/a de ciclo o acuda a la sección de <a href="https://{subdomain}.fpvirtualaragon.es/soporte/">ayuda/incidencias</a>.<br/><br/><br/>Saludos<br/><br/>------<br/>FP virtual Aragón{pie_email_rrss}'''.format(nombre = nombre, apellidos = apellidos, subdomain = SUBDOMAIN, matriculado_en_texto = matriculado_en_texto, pie_email_rrss = pie_email_rrss )
 
                 destinatario = "gestion@fpvirtualaragon.es"
                 if SUBDOMAIN == "www":
@@ -1308,37 +1317,34 @@ def send_email_con_adjunto(destinatario, asunto, filename):
             server.quit()
     return enviado
 
-def send_email(destinatario, asunto, texto):
-    print("send_email(destinatario: '" + destinatario + "')")
-    """
-    Al destinatario envía un email con el asunto y texto dados
-    """
-    enviado = False
-    port = SMTP_PORT  # For starttls
+import smtplib, ssl
+from email.message import EmailMessage
+from email.headerregistry import Address
+
+def send_email(destinatario, asunto, html):
+    port = SMTP_PORT
     smtp_server = SMTP_HOSTS
     sender_email = SMTP_USER
-    receiver_email = destinatario
     password = SMTP_PASSWORD
-    texto = texto.encode('utf-8')
-    message = f"Subject: {asunto}\nMIME-Version: 1.0\nContent-type: text/html\n\n{texto}".encode("utf-8")
+
+    msg = EmailMessage()
+    msg['Subject'] = asunto                # se codifica bien
+    msg['From'] = sender_email
+    msg['To'] = destinatario
+    msg.set_content("Tu cliente no soporta HTML.")   # parte de texto plano
+    msg.add_alternative(html, subtype='html')        # parte HTML
 
     context = ssl.create_default_context()
     with smtplib.SMTP(smtp_server, port) as server:
         try:
-            # server.ehlo()  # Can be omitted
             server.starttls(context=context)
-            # server.ehlo()  # Can be omitted
             server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message)
-            enviado = True
+            server.send_message(msg)  # <- evita concatenaciones manuales
+            return True
         except Exception as e:
-            if hasattr(e, 'message'):
-                print(e.message)
-            else:
-                print(e)
-        finally:
-            server.quit()
-    return enviado
+            print(e)
+            return False
+
 
 def suspende_alumno_moodle(id_usuario, moodle):
     """
