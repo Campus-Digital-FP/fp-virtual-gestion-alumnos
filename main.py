@@ -628,7 +628,7 @@ def main():
     print("Printed after 5 seconds.")
     emails = REPORT_TO.split()
     for email in emails:
-        send_email_con_adjuntos(email, "Informe automatizado gestión automática usuarios moodle", [full_filename, fichero_csv] )
+        send_email_con_adjuntos(email, "Informe automatizado gestión automática usuarios moodle", [full_filename, filename_csv] )
 
     #
     # End of main 
