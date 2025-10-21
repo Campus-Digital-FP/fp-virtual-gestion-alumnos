@@ -619,7 +619,7 @@ def main():
     # Escribimos el fichero CSV con los nuevos usuarios para google
     filename_csv = "/var/fp-distancia-gestion-usuarios-automatica/csvs/" + filename + SUBDOMAIN + ".csv"
     fichero_csv = open(filename_csv, "x")
-    fichero_csv.write(csv)
+    fichero_csv.write("\n".join( csv ) )
     fichero_csv.close()
     print("Fichero CSV escrito y cerrado: " + filename_csv)
 
