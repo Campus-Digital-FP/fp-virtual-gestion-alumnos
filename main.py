@@ -385,7 +385,7 @@ def main():
             escribeEnFichero(filename_md, "ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS\n")
             break
 
-        if  SUBDOMAIN != "www" and num_emails_enviados >= 10: # limitacion de 10 emails para entornos que no sean producción.:
+        if  SUBDOMAIN != "www" and num_emails_enviados >= 3: # limitacion de 10 emails para entornos que no sean producción.:
             escribeEnFichero(filename_md, "\nALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS ")
             escribeEnFichero(filename_md, "ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS ")
             escribeEnFichero(filename_md, "ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS\n")
