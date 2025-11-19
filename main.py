@@ -30,10 +30,9 @@ filename_csv = "";
 
 
 def main():
-    global filename_md
-    global filename_csv
 
     # Preparo el fichero log para escribir en él.
+    global filename_md
     print("Comenzamos con el fichero")
     datetimeForFilename = get_date_time_for_filename()
     print("filename: " + datetimeForFilename)
@@ -41,6 +40,7 @@ def main():
     print("filename_md: " + filename_md)
 
     ## Preparao el fichero csv para escribir en él.
+    global filename_csv
     filename_csv = "/var/fp-distancia-gestion-usuarios-automatica/csvs/" + datetimeForFilename + SUBDOMAIN + ".csv"
     print("filename_csv: " + filename_csv)
     
