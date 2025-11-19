@@ -221,7 +221,7 @@ def main():
                 usuario = alumnoSIGAD.getDocumento()
                 oldUsuario = alumnoMoodle['username']
 
-                plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/nuevoUsuario.html")
+                plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/nombreUsuarioActualizado.html")
                 plantilla = plantilla_path.read_text(encoding="utf-8")
 
                 mensaje = plantilla.format(
@@ -381,7 +381,7 @@ def main():
     #
     csv.append("First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Password Hash Function [UPLOAD ONLY],Org Unit Path [Required],New Primary Email [UPLOAD ONLY],Recovery Email,Work Secondary Email,New Status [UPLOAD ONLY]")
     for alumno in alumnos_sigad:
-        if num_emails_enviados >= 3: # limitacion de 2.000 emails diarios en actual cuenta de gmail
+        if num_emails_enviados >= 1000: # limitacion de 2.000 emails diarios en actual cuenta de gmail
             # TODO: seguimos teniendo esta limitación en cuenta de pago?
             mensajes_email.append("<br/>")
             mensajes_email.append(" ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS ")
