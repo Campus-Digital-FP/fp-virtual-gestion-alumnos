@@ -254,7 +254,7 @@ def main():
 
     
     print("### Alumnos a suspender totalmente de Moodle")
-    escribeEnFichero(filename_md, " ##### (" + get_date_time_for_humans() + ") Estudiantes a suspender totalmente de Moodle al no estar en SIGAD, 1ero matrículas y 2ndo a ellos:\n")
+    escribeEnFichero(filename_md, "##### (" + get_date_time_for_humans() + ") Estudiantes a suspender totalmente de Moodle al no estar en SIGAD, 1ero matrículas y 2ndo a ellos:\n")
     for alumnoMoodle in alumnos_a_suspender:
         print("- ", repr(alumnoMoodle) )
         if int(alumnoMoodle['userid']) not in usuarios_moodle_no_borrables:
@@ -541,7 +541,7 @@ def main():
     num_tutorias_suspendidas = eval_estudiantes_con_mas_de_1_tutorias(moodle, alumnos_sigad, filename_md)
     
     # Listo alumnos que no se han podido crear
-    escribeEnFichero(filename_md, + "##### (" + get_date_time_for_humans() + ") Alumnos que no se han podido crear:\n")
+    escribeEnFichero(filename_md, "##### (" + get_date_time_for_humans() + ") Alumnos que no se han podido crear:\n")
     print("Alumnos de SIGAD que no se han podido crear en Moodle: ")
     for alumno in usuarios_no_creables:
         print( "- ", repr(alumno) )
