@@ -1311,7 +1311,7 @@ def send_email_con_adjuntos(destinatario, asunto, html, filenames):
     password = SMTP_PASSWORD
 
     # Crear mensaje
-    message = MIMEMultipart()
+    message = MIMEMultipart("alternative")
     message["From"] = sender_email
     message["To"] = receiver_email
     message["Subject"] = asunto
