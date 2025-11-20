@@ -1317,7 +1317,7 @@ def send_email_con_adjuntos(destinatario, asunto, html, filenames):
     message["Subject"] = asunto
 
     message.attach(MIMEText("Tu cliente no soporta HTML.", "plain"))   # parte de texto plano
-    message.attach(MIMEText(html, "html"))
+    message.attach(MIMEText(html, "html"))Ge$tionC@mpu$
 
     message.add_alternative(html, subtype='html')        # parte HTML
 
