@@ -551,7 +551,8 @@ def main():
     num_tutorias_suspendidas = eval_estudiantes_con_mas_de_1_tutorias(moodle, alumnos_sigad, filename_md)
     
     # Listo alumnos que no se han podido crear
-    escribeEnFichero(filename_md, "##### (" + get_date_time_for_humans() + ") Alumnos que no se han podido crear:\n")
+    escribeEnFichero(filename_md, "\n### Alumnos que no se han podido crear\n")
+    escribeEnFichero(filename_md, get_date_time_for_humans() + "\n")
     print("## Alumnos de SIGAD que no se han podido crear en Moodle")
     for alumno in usuarios_no_creables:
         print( "- ", repr(alumno) )
@@ -644,7 +645,8 @@ def eval_estudiantes_con_mas_de_1_tutorias(moodle, alumnos_sigad, filename_md):
     # Aquellos estudiantes que tengan 2 o mas tutorías los busco en los datos que han llegado de 
     # SIGAD y compruebo si están dónde deberían estar o no y los mantengo en la cohorte o no
     print("Estudiantes con 2 tutorías o mas")
-    escribeEnFichero(filename_md, "##### (" + get_date_time_for_humans() + ")Alumnos con mas de 1 tutoría:\n")
+    escribeEnFichero(filename_md, "\n### Alumnos con mas de 1 tutoría:\n")
+    escribeEnFichero(filename_md, get_date_time_for_humans() + "\n")
     for estudianteMoodle in estudiantes:
         print("- Evaluando estudiante: ", estudianteMoodle)
         escribeEnFichero(filename_md, "- Evaluando a: " + estudianteMoodle['username'])
@@ -1316,10 +1318,7 @@ def send_email_con_adjuntos(destinatario, asunto, html, filenames):
     message["To"] = receiver_email
     message["Subject"] = asunto
 
-    message.attach(MIMEText("Tu cliente no soporta HTML.", "plain"))   # parte de texto plano
-    message.attach(MIMEText(html, "html"))
-
-    message.add_alternative(html, subtype='html')        # parte HTML
+    message.attach(MIMEText(html, "html")) # parte HTML
 
     # Adjuntar cada fichero
     for filename in filenames:
