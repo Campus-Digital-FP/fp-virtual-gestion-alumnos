@@ -1,7 +1,7 @@
 class Centro:
     NAME="CENTRO"
 
-    def __init__(self, codigoCentro, centro):
+    def __init__(self, codigoCentro: str, centro: str):
         self.__codigoCentro = codigoCentro
         self.__centro = centro
         self.__ciclos = None

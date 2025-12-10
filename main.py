@@ -49,6 +49,7 @@ def main():
     escribeEnFichero(filename_md, "\n## ENTORNO\n")
     escribeEnFichero(filename_md, SUBDOMAIN)
     escribeEnFichero(filename_md, "\n## RESUMEN DETALLADO\n")
+
     # ids de users creados en deploy que no hay que borrar
     usuarios_moodle_no_borrables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 3725, 3729, 3730, 7152, 7490, 7491, 11720, 12270, 12272]
     # 
@@ -89,23 +90,23 @@ def main():
     procesa_desde_fichero = False # Procesa desde fichero en lugar del ws
     if procesa_desde_fichero:
         with open(PATH + "jsons/20250925_01.json", "r", encoding="utf-8") as f:
-            y = json.load(f)
-        if y is not None:
-            codigo=y["codigo"]
-            mensaje=y["mensaje"]
+            resp_json = json.load(f)
+        if resp_json is not None:
+            codigo=resp_json["codigo"]
+            mensaje=resp_json["mensaje"]
             print("codigo: " + str(codigo) + ", mensaje: " + str(mensaje))
-            procesaJsonEstudiantes(y, alumnos_sigad)
+            procesaJsonEstudiantes(resp_json, alumnos_sigad)
     else: 
         # Creo la conexión para la 1era llamada
         conexion_1er_ws = Conexion(url1, path1 + curso_academico, usuario1, password1, method1)
         # Hago la 1era llamada
         print( 'Making the call to the 1st web service:')
         resp_data = conexion_1er_ws.getJson()
-        y = json.loads(resp_data)
-        if y is not None:
-            codigo=y["codigo"]
-            mensaje=y["mensaje"]
-            idSolicitud=y["idSolicitud"]
+        resp_json = json.loads(resp_data)
+        if resp_json is not None:
+            codigo=resp_json["codigo"]
+            mensaje=resp_json["mensaje"]
+            idSolicitud=resp_json["idSolicitud"]
             print("Código: " , codigo, ", Mensaje: ", mensaje, "idSolicitud: ", idSolicitud)
             guarda_fichero_respuesta_ws1(get_date_time() + "." + SUBDOMAIN + ".ws1.json", resp_data)
             if codigo == 0: # éxito en la 1era llamada
@@ -116,15 +117,15 @@ def main():
                     print( 'Iteration number ' + str(x))
                     conexion_2ndo_ws = Conexion(url2, path2 + str(idSolicitud), usuario2, password2, method2)
                     resp_data = conexion_2ndo_ws.getJson()
-                    y = json.loads(resp_data)
+                    resp_json = json.loads(resp_data)
 
-                    if y is not None:
-                        codigo=y["codigo"]
-                        mensaje=y["mensaje"]
+                    if resp_json is not None:
+                        codigo=resp_json["codigo"]
+                        mensaje=resp_json["mensaje"]
                         print("codigo: " + str(codigo) + ", mensaje: " + str(mensaje))
                         if codigo == 0: # éxito de la 2nda llamada
                             guarda_fichero_respuesta_ws2(get_date_time() + "." + SUBDOMAIN + ".ws2.json", resp_data )
-                            procesaJsonEstudiantes(y, alumnos_sigad)
+                            procesaJsonEstudiantes(resp_json, alumnos_sigad)
                             break
                         else: # Error  en la 2ª llamada
                             print("Fichero aún no listo. Código: " + str(codigo) 
@@ -360,12 +361,6 @@ def main():
                             continue
                     if not en_sigad_esta_matriculado:
                         print("  - En SIGAD el alumno", username, "NO está matriculado en", course_shortname, "se procede a suspender su matrícula en el curso de moodle")
-
-                        # Casos especiales de fusión de cursos de Maite
-                        # TODO Borrar el if para antes de empezar el curso 2026-2027
-                        if course_shortname == "50020125-IFC301-5061" or course_shortname == "50020125-IFC302-5077" or course_shortname == "50020125-IFC303-5092" or course_shortname == "50020125-IFC201-5001":
-                            continue;
-                        # Fin del if que haría que borrar.
 
                         suspende_matricula_en_curso(moodle, userid, courseid)
                         # NO hay que sacarlo de la cohorte, eso borra progreso
@@ -627,7 +622,7 @@ def main():
 #################################
 #################################
 
-def escribeEnFichero(nombre_fichero, linea):
+def escribeEnFichero(nombre_fichero: str, linea: str):
     """
     Escribe en el fichero indicado en nombre_fichero la linea indicada, sin sobreescribir lo que ya hubiera.
     """
@@ -1017,7 +1012,7 @@ def abre_fichero(nombre_fichero):
     with open(PATH + "logs/" + nombre_fichero, "r") as f:
         return f.read()
 
-def guarda_fichero_respuesta_ws1(nombre_fichero, contenido):
+def guarda_fichero_respuesta_ws1(nombre_fichero: str, contenido: bytes):
     """
     Guarda en disco duro, en la carpeta logs un fichero con el nombre indicado en parámetro y el contenido dado
     """
@@ -1026,7 +1021,7 @@ def guarda_fichero_respuesta_ws1(nombre_fichero, contenido):
     with open(PATH + "logs/" + SUBDOMAIN + "/json/" + nombre_fichero, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-def guarda_fichero_respuesta_ws2(nombre_fichero, contenido):
+def guarda_fichero_respuesta_ws2(nombre_fichero: str, contenido: bytes):
     """
     Guarda en disco duro, en la carpeta logs un fichero con el nombre indicado en parámetro y el contenido dado
     """
@@ -1037,10 +1032,9 @@ def guarda_fichero_respuesta_ws2(nombre_fichero, contenido):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def get_moodle(subdomain):
+def get_moodle(subdomain: str):
     """
-    Devuelve un objeto como el siguiente:
-    #
+    Devuelve un objeto que identifica el contenedor de docker del moodle indicado por subdomain
     """
     print("get_moodle(subdomain: ",subdomain,")", sep="")
     # urls = []
@@ -1511,14 +1505,14 @@ def get_cursos(moodle):
 
     return cursos    
 
-def procesaJsonEstudiantes(y, alumnos_sigad):
+def procesaJsonEstudiantes(resp_json, alumnos_sigad):
     """
     Procesa el fichero JSON obteniendo los alumnos y que estudian y los
     añade a alumnos_sigad
     """
-    estudiantes=y["estudiantes"]
+    estudiantes=resp_json["estudiantes"]
     # print( "type(estudiantes): ", type(estudiantes) ) # str
-    estudiantesJson=json.loads(estudiantes)
+    estudiantesJson=resp_json.loads(estudiantes)
     # print( "type(estudiantesJson: ",type(estudiantesJson) ) # dict
 
     fecha=estudiantesJson["fecha"]
@@ -1581,6 +1575,23 @@ def procesaJsonEstudiantes(y, alumnos_sigad):
                     miModulo = Modulo(idMateria, moduloo, siglasModulo)
                     #
                     miCiclo.addModulo(miModulo)
+
+                    # INI: Casos especiales de fusión de cursos de Maite (CAMPUS DIGITAL)
+                    # Cursos a fusionar:
+                    # 50020125-IFC301-5061 - Agrupado - Lengua extranjera profesional: inglés 2
+                    # 50020125-IFC302-5077 - DAM - Lengua Extranjera profesional: Inglés 2
+                    # 50020125-IFC303-5092 - DAW - Lengua Extranjera profesional: Inglés 2
+                    # 50020125-IFC201-5001 - SMR - Lengua extranjera profesional: inglés 2
+                    # TODO Borrar para antes de empezar el curso 2026-2027
+                    if( miCentro.get_codigo_centro() == "50020125" and
+                       miCiclo.get_siglas_ciclo() in ("IFC302","IFC303","IFC201") and
+                       miModulo.get_id_materia() in (5077,5092,5001) ):
+                        # Añado un nuevo ciclo
+                        miCicloAgrupado = Ciclo(idFicha, codigoCiclo, cicloo, "IFC301")
+                        miModuloAgrupado = Modulo(5061, moduloo, siglasModulo)
+                        miCicloAgrupado.addModulo(miModuloAgrupado)
+                        miCentro.addCiclo(miCicloAgrupado)
+                    # FIN: Casos especiales de fusión de cursos de Maite (CAMPUS DIGITAL)
                 #
                 miCentro.addCiclo(miCiclo)
             # Add miCentro to miAlumno
@@ -1631,7 +1642,7 @@ def isAlumnoCreable(alumno):
 
     return alumno_creable
 
-def crearAlumnoEnMoodle(moodle, alumno, password):
+def crearAlumnoEnMoodle(moodle, alumno, password: str):
     """
     Crea un usuario en moodle con los datos del objeto alumno
     Devuelve el id del alumno creado
@@ -1669,15 +1680,10 @@ def crearAlumnoEnMoodle(moodle, alumno, password):
 
 def crearShortnameCurso(codigo_centro, siglas_ciclo, id_materia):
     """
-    Crea el shortname del curso a partir de los datos dados teniendo en cuenta que hay que fusionar los cursos de Maite.
+    Crea el shortname del curso a partir de los datos dados
     """
 
     shortname = str(codigo_centro) + "-" + str(siglas_ciclo) + "-" + str(id_materia)
-
-    # Casos especiales de fusión de cursos de Maite
-    # TODO Borrar para antes de empezar el curso 2026-2027
-    if shortname == "50020125-IFC301-5061" or shortname == "50020125-IFC302-5077" or shortname == "50020125-IFC303-5092" or shortname == "50020125-IFC201-5001":
-        shortname = "50020125-IFC301-5061"
 
     return shortname
     #
