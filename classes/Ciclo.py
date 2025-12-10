@@ -1,7 +1,7 @@
 class Ciclo:
     NAME="CICLO"
 
-    def __init__(self, idFicha, codigoCiclo, ciclo, siglasCiclo):
+    def __init__(self, idFicha: int, codigoCiclo: str, ciclo: str, siglasCiclo: str):
         self.__idFicha = idFicha
         self.__codigoCiclo = codigoCiclo
         self.__ciclo = ciclo
