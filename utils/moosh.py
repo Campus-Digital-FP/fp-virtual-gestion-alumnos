@@ -1,8 +1,11 @@
 import subprocess
+import logging
+
+logger = logging.getLogger(__name__)  # __name__ = "utils.api_client"
 
 def run_moosh_command(moodle, command, capture=False, timeout=10):
-    print("run_moosh_command(...)")
-    print("command:", command)
+    logger.info("run_moosh_command(...)")
+    logger.info("command:", command)
 
     command_string = f"docker exec {moodle['container_name']} {command}"
 
@@ -23,13 +26,13 @@ def run_moosh_command(moodle, command, capture=False, timeout=10):
                 timeout=timeout
             )
     except subprocess.TimeoutExpired:
-        print(f"⏱️ El comando tardó más de {timeout} segundos y fue cancelado.")
+        logger.info(f"⏱️ El comando tardó más de {timeout} segundos y fue cancelado.")
         return ""
 
 
 def run_command(command, capture=False, timeout=10):
-    print("run_command(...)")
-    print("command:", command)
+    logger.info("run_command(...)")
+    logger.info("command:", command)
 
     try:
         if capture:
@@ -48,5 +51,5 @@ def run_command(command, capture=False, timeout=10):
                 timeout=timeout
             )
     except subprocess.TimeoutExpired:
-        print(f"⏱️ El comando tardó más de {timeout} segundos y fue cancelado.")
+        logger.info(f"⏱️ El comando tardó más de {timeout} segundos y fue cancelado.")
         return ""

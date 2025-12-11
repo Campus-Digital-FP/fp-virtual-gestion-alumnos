@@ -2,7 +2,7 @@ import pytest
 from utils import api_client
 from unittest.mock import Mock
 
-def test_solicitar_datos_exitoso(mock_requests, mock_env_vars):
+def test_solicitar_datos_success(mock_requests, mock_env_vars):
     # Configurar mock de respuesta exitosa
     mock_response = Mock()
     mock_response.json.return_value = {"codigo": 0, "idSolicitud": 12345}

@@ -1,9 +1,12 @@
 import io
 import os
 from utils.moosh import run_moosh_command, run_command
+import logging
+
+logger = logging.getLogger(__name__)  # __name__ = "utils.api_client"
 
 def get_alumnos_moodle_no_borrados(moodle):
-    print("get_alumnos_moodle_no_borrados(...)")
+    logger.info("get_alumnos_moodle_no_borrados(...)")
     """
     Devuelve una lista de alumnos (omite usuarios con username que empiece por prof) que actualmente están en moodle:
     #
@@ -40,7 +43,7 @@ def get_alumnos_moodle_no_borrados(moodle):
 
         email_sigad = run_command( command , True).rstrip()
     
-        print("email_sigad: ", email_sigad)
+        logger.info("email_sigad: ", email_sigad)
 
         al["email_sigad"] = email_sigad
     
