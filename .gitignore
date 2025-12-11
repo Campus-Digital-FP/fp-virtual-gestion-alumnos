@@ -10,3 +10,8 @@ classes/__pycache__/*
 jsons/
 csvs/
 scripts/
+
+# permitir .env.example
+!.env.example
+.env
+.env.predesarrollo
