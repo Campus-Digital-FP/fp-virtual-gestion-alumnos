@@ -1513,7 +1513,7 @@ def procesaJsonEstudiantes(resp_json, alumnos_sigad):
     """
     estudiantes=resp_json["estudiantes"]
     # print( "type(estudiantes): ", type(estudiantes) ) # str
-    estudiantesJson=resp_json.loads(estudiantes)
+    estudiantesJson=json.loads(estudiantes)
     # print( "type(estudiantesJson: ",type(estudiantesJson) ) # dict
 
     fecha=estudiantesJson["fecha"]
