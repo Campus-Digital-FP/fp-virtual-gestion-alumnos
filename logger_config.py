@@ -1,58 +1,57 @@
 import logging
-import logging.handlers
 import os
 from pathlib import Path
+from datetime import datetime
 
-def setup_logger(name: str = "gestion-alumnos") -> logging.Logger:
-    """
-    Configura el logger con la carpeta 'log/' en la raíz del proyecto
-    """
-    # Obtener directorio raíz del proyecto (donde está logger_config.py)
+# 1️⃣ Nivel de log personalizado para Markdown
+MARKDOWN_LEVEL = 25  # Entre INFO (20) y WARNING (30)
+
+class MarkdownLogger(logging.Logger):
+    """Logger con método markdown() exclusivo"""
+    def markdown(self, message, *args, **kwargs):
+        self.log(MARKDOWN_LEVEL, message, *args, **kwargs)
+
+class MarkdownFilter(logging.Filter):
+    """Filtro que solo pasa los logs de nivel MARKDOWN"""
+    def filter(self, record):
+        return record.levelno == MARKDOWN_LEVEL
+
+class MarkdownFormatter(logging.Formatter):
+    """Convierte solo los mensajes markdown a formato MD"""
+    def format(self, record):
+        return f"- 📝 **Informe:** {record.getMessage()}\n"
+
+def setup_logger(name: str = "mi_app") -> MarkdownLogger:
+    # Registrar la clase de logger personalizada
+    logging.setLoggerClass(MarkdownLogger)
+    
     project_root = Path(__file__).parent.resolve()
     log_dir = project_root / "log"
-    
-    # Crear carpeta log con permisos 755 (si no existe)
     log_dir.mkdir(mode=0o755, exist_ok=True)
     
+    timestamp = datetime.now().strftime("%d%m%Y_%H%M%S")
     logger = logging.getLogger(name)
     logger.setLevel(logging.DEBUG)
     
-    # Formato detallado
-    formatter = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    
-    # Handler principal (DEBUG y superior)
-    main_handler = logging.handlers.RotatingFileHandler(
-        log_dir / "app.log",
-        maxBytes=10*1024*1024,  # 10MB
-        backupCount=5
-    )
+    # Handler de archivo normal (DEBUG y superior)
+    main_handler = logging.FileHandler(log_dir / f"app_{timestamp}.log", encoding='utf-8')
     main_handler.setLevel(logging.DEBUG)
-    main_handler.setFormatter(formatter)
+    main_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s'
+    ))
+    logger.addHandler(main_handler)
     
-    # Handler de errores (ERROR y superior)
-    error_handler = logging.handlers.RotatingFileHandler(
-        log_dir / "error.log",
-        maxBytes=5*1024*1024,   # 5MB
-        backupCount=3
-    )
-    error_handler.setLevel(logging.ERROR)
-    error_handler.setFormatter(formatter)
+    # ✅ Handler EXCLUSIVO para markdown
+    md_handler = logging.FileHandler(log_dir / f"informe_{timestamp}.md", mode='w', encoding='utf-8')
+    md_handler.setLevel(MARKDOWN_LEVEL)  # Solo captura nivel MARKDOWN
+    md_handler.addFilter(MarkdownFilter())  # Filtro estricto
+    md_handler.setFormatter(MarkdownFormatter())
+    logger.addHandler(md_handler)
     
-    # Handler para consola
+    # Handler de consola (INFO y superior, excepto markdown)
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
-    console_formatter = logging.Formatter(
-        '%(asctime)s - %(levelname)s - %(message)s',
-        datefmt='%H:%M:%S'
-    )
-    console_handler.setFormatter(console_formatter)
-    
-    # Añadir handlers
-    logger.addHandler(main_handler)
-    logger.addHandler(error_handler)
+    console_handler.addFilter(lambda r: r.levelno != MARKDOWN_LEVEL)  # Excluye markdown
     logger.addHandler(console_handler)
     
     return logger

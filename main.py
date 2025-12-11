@@ -10,7 +10,8 @@ import smtplib
 import ssl
 import traceback
 from datetime import datetime
-from Config import *
+# TODO quitar cuando funcione .env en en todo
+# from Config import *
 from Conexion import *
 from classes.Alumno import *
 from classes.Centro import *
@@ -37,10 +38,25 @@ def main():
     # Path al directorio actual
     directorio_script = os.path.dirname(os.path.abspath(__file__))
     print(f"El archivo main.py está en: {directorio_script}")
+
+    logger.markdown("# Informe de gestion alumnos")
+    logger.markdown(datetime.now().strftime("%d%m%Y_%H%M%S"))
+    logger.markdown("## ENTORNO")
+    logger.markdown(os.getenv("SUBDOMAIN"))
+    logger.markdown("## RESUMEN DETALLADO")
+
+    # ids de users creados en deploy que no hay que borrar
+    usuarios_moodle_no_borrables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 3725, 3729, 3730, 7152, 7490, 7491, 11720, 12270, 12272]
+
+    moodle = get_moodle(os.getenv("SUBDOMAIN"))[0]
+    alumnos_moodle = get_alumnos_moodle_no_borrados(moodle) # Alumnos que figuran en moodle antes de ejecutar el script
+
+def main_old():
+    # Path al directorio actual
+    directorio_script = os.path.dirname(os.path.abspath(__file__))
+    logger.info(f"El archivo main.py se ejecuta en: {directorio_script}")
     
-    # Preparo el fichero log para escribir en él.
-    global filename_md
-    print("Comenzamos con el fichero")
+    
     datetimeForFilename = get_date_time_for_filename()
     print("filename: " + datetimeForFilename)
     filename_md = LOCAL_PATH + "/logs/" + os.getenv("SUBDOMAIN") + "/html/" + datetimeForFilename + os.getenv("SUBDOMAIN") + ".md"
@@ -1722,15 +1738,11 @@ def es_dni_valido(dni: str) -> bool:
 
 
 #try:
-    # Inicializar logger (se crea la carpeta log automáticamente)
+# Inicializar logger (se crea la carpeta log automáticamente)
 logger = setup_logger()
 load_dotenv()
-    # TODO Comentado, para empezar pruebas 
-    # main()
-if api_client.main():  # Ahora devuelve True/False
-    logger.info("Sincronización exitosa")
-else:
-    logger.error("Falló la sincronización")
+main()
+
 
 # except Exception as exc:
 #   print("1.- traceback.print_exc()")
