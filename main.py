@@ -1721,40 +1721,40 @@ def es_dni_valido(dni: str) -> bool:
 ###################################################
 
 
-try:
+#try:
     # Inicializar logger (se crea la carpeta log automáticamente)
-    logger = setup_logger()
-    load_dotenv()
+logger = setup_logger()
+load_dotenv()
     # TODO Comentado, para empezar pruebas 
     # main()
-    if api_client.main():  # Ahora devuelve True/False
-        logger.info("Sincronización exitosa")
-    else:
-        logger.error("Falló la sincronización")
+if api_client.main():  # Ahora devuelve True/False
+    logger.info("Sincronización exitosa")
+else:
+    logger.error("Falló la sincronización")
 
-except Exception as exc:
-    print("1.- traceback.print_exc()")
-    traceback.print_exc()
-    print("2.- traceback.print_exception(*sys.exc_info())")
-    traceback.print_exception(*sys.exc_info())
-    print("--------------------")
-    print(exc)
+# except Exception as exc:
+#   print("1.- traceback.print_exc()")
+#    traceback.print_exc()
+#    print("2.- traceback.print_exception(*sys.exc_info())")
+#    traceback.print_exception(*sys.exc_info())
+#    print("--------------------")
+#    print(exc)
 
-    plantilla_path = Path(LOCAL_PATH + "/templates/haFalladoElInforme.html")
-    plantilla = plantilla_path.read_text(encoding="utf-8")
+#    plantilla_path = Path(LOCAL_PATH + "/templates/haFalladoElInforme.html")
+#    plantilla = plantilla_path.read_text(encoding="utf-8")
 
-    mensaje = plantilla.format(
-        subdomain = os.getenv("MODO"),
-        filename_md = filename_md,
-        filename_csv = filename_csv,
-        error = str(exc),
-        traceback = str(traceback.print_exc()),
-        tracebackException = str(traceback.print_exception(*sys.exc_info())),
-    )
+#    mensaje = plantilla.format(
+#       subdomain = os.getenv("MODO"),
+#        filename_md = filename_md,
+#        filename_csv = filename_csv,
+#        error = str(exc),
+#        traceback = str(traceback.print_exc()),
+#        tracebackException = str(traceback.print_exception(*sys.exc_info())),
+#    )
 
-    emails = os.getenv("REPORT_TO").split()
-    for email in emails:
-        send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )
+#    emails = os.getenv("REPORT_TO").split()
+#    for email in emails:
+#        send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )
 
 
 ## Ejemplo de uso de logger:
