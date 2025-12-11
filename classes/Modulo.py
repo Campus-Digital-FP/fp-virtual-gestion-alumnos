@@ -3,7 +3,7 @@ from Util import *
 class Modulo:
     NAME="MODULO"
 
-    def __init__(self, idMateria: int, modulo: str, siglasModulo: str):
+    def __init__(self, idMateria, modulo, siglasModulo):
         # print("idMateria antes: " + str(idMateria))
         self.__idMateria = conversionLFPaLOE(idMateria)
         # print("idMateria después: " + str(self.__idMateria))
