@@ -26,6 +26,7 @@ from pathlib import Path
 import re
 from dotenv import load_dotenv
 from logger_config import setup_logger
+from utils import api_client
 
 filename_md = "";
 filename_csv = "";
@@ -45,7 +46,7 @@ def main():
     filename_md = LOCAL_PATH + "/logs/" + os.getenv("SUBDOMAIN") + "/html/" + datetimeForFilename + os.getenv("SUBDOMAIN") + ".md"
     print("filename_md: " + filename_md)
 
-    ## Preparao el fichero csv para escribir en él.
+    ## Preparo el fichero csv para escribir en él.
     global filename_csv
     filename_csv = LOCAL_PATH + "/csvs/" + datetimeForFilename + os.getenv("SUBDOMAIN") + ".csv"
     print("filename_csv: " + filename_csv)
@@ -1724,7 +1725,13 @@ try:
     # Inicializar logger (se crea la carpeta log automáticamente)
     logger = setup_logger()
     load_dotenv()
-    main()
+    # TODO Comentado, para empezar pruebas 
+    # main()
+    if api_client.main():  # Ahora devuelve True/False
+        logger.info("Sincronización exitosa")
+    else:
+        logger.error("Falló la sincronización")
+
 except Exception as exc:
     print("1.- traceback.print_exc()")
     traceback.print_exc()
