@@ -537,7 +537,9 @@ def main():
                 else:
                     print("Debería haberse enviado a '", alumno.getEmailSigad(), "'." )
                 
-                enviado = send_email( destinatario , "FP virtual - Aragón", mensaje)
+                # TODO Deschacer esto cuando no haya alumnos suspendidos.
+                # enviado = send_email( destinatario , "FP virtual - Aragón", mensaje)
+                enviado = False 
 
                 if enviado:
                     num_emails_enviados = num_emails_enviados + 1
