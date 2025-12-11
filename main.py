@@ -28,8 +28,14 @@ import re
 filename_md = "";
 filename_csv = "";
 
-def main():
+import logging
+import logging.handlers
 
+def main():
+    # Path al directorio actual
+    directorio_script = os.path.dirname(os.path.abspath(__file__))
+    print(f"El archivo main.py está en: {directorio_script}")
+    
     # Preparo el fichero log para escribir en él.
     global filename_md
     print("Comenzamos con el fichero")
