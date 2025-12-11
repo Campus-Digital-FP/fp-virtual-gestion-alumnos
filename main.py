@@ -532,7 +532,8 @@ def main():
                 else:
                     print("Debería haberse enviado a '", alumno.getEmailSigad(), "'." )
                 
-                enviado = send_email( destinatario , "FP virtual - Aragón", mensaje)
+                # enviado = send_email( destinatario , "FP virtual - Aragón", mensaje)
+                enviado = False
 
                 if enviado:
                     num_emails_enviados = num_emails_enviados + 1
