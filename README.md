@@ -1,7 +1,12 @@
-# fp-distancia-gestion-usuarios-automatica
+# gestion-usuarios-automatica
 Aplicación para gestionar automáticamente la creación y borrado de usuarios en Moodle así como su matriculación/desmatriculación
 
-# Hacer funcionar este programa
+## 1. Ejecución con Poetry
+```python
+poetry shell
+```
+
+### Backup - Hacer funcionar este programa
 Crea una copia del fichero Config-sample.py llamada Config.py en la misma ruta con los datos de acceso adecuados
 
 # Funcionamiento

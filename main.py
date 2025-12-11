@@ -24,12 +24,13 @@ from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 import re
+from dotenv import load_dotenv
+from logger_config import setup_logger
 
 filename_md = "";
 filename_csv = "";
 
-import logging
-import logging.handlers
+LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
 
 def main():
     # Path al directorio actual
@@ -41,24 +42,24 @@ def main():
     print("Comenzamos con el fichero")
     datetimeForFilename = get_date_time_for_filename()
     print("filename: " + datetimeForFilename)
-    filename_md = "/var/fp-distancia-gestion-usuarios-automatica/logs/" + SUBDOMAIN + "/html/" + datetimeForFilename + SUBDOMAIN + ".md"
+    filename_md = LOCAL_PATH + "/logs/" + os.getenv("SUBDOMAIN") + "/html/" + datetimeForFilename + os.getenv("SUBDOMAIN") + ".md"
     print("filename_md: " + filename_md)
 
     ## Preparao el fichero csv para escribir en él.
     global filename_csv
-    filename_csv = "/var/fp-distancia-gestion-usuarios-automatica/csvs/" + datetimeForFilename + SUBDOMAIN + ".csv"
+    filename_csv = LOCAL_PATH + "/csvs/" + datetimeForFilename + os.getenv("SUBDOMAIN") + ".csv"
     print("filename_csv: " + filename_csv)
     
     #
     escribeEnFichero(filename_md, "# Informe de gestion alumnos\n")
     escribeEnFichero(filename_md, get_date_time_for_humans())
     escribeEnFichero(filename_md, "\n## ENTORNO\n")
-    escribeEnFichero(filename_md, SUBDOMAIN)
+    escribeEnFichero(filename_md, os.getenv("SUBDOMAIN"))
     escribeEnFichero(filename_md, "\n## RESUMEN DETALLADO\n")
     # ids de users creados en deploy que no hay que borrar
     usuarios_moodle_no_borrables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 3725, 3729, 3730, 7152, 7490, 7491, 11720, 12270, 12272]
     # 
-    moodle = get_moodle(SUBDOMAIN)[0]
+    moodle = get_moodle(os.getenv("SUBDOMAIN"))[0]
     alumnos_sigad = []
     alumnos_moodle = get_alumnos_moodle_no_borrados(moodle) # Alumnos que figuran en moodle antes de ejecutar el script
     # contadores
@@ -94,7 +95,7 @@ def main():
 
     procesa_desde_fichero = False # Procesa desde fichero en lugar del ws
     if procesa_desde_fichero:
-        with open(PATH + "jsons/20250925_01.json", "r", encoding="utf-8") as f:
+        with open(os.getenv("PATH") + "jsons/20250925_01.json", "r", encoding="utf-8") as f:
             y = json.load(f)
         if y is not None:
             codigo=y["codigo"]
@@ -113,7 +114,7 @@ def main():
             mensaje=y["mensaje"]
             idSolicitud=y["idSolicitud"]
             print("Código: " , codigo, ", Mensaje: ", mensaje, "idSolicitud: ", idSolicitud)
-            guarda_fichero_respuesta_ws1(get_date_time() + "." + SUBDOMAIN + ".ws1.json", resp_data)
+            guarda_fichero_respuesta_ws1(get_date_time() + "." + os.getenv("SUBDOMAIN") + ".ws1.json", resp_data)
             if codigo == 0: # éxito en la 1era llamada
                 # 
                 print( 'Waiting 10 seconds before the first call to the 2nd web service...')
@@ -129,7 +130,7 @@ def main():
                         mensaje=y["mensaje"]
                         print("codigo: " + str(codigo) + ", mensaje: " + str(mensaje))
                         if codigo == 0: # éxito de la 2nda llamada
-                            guarda_fichero_respuesta_ws2(get_date_time() + "." + SUBDOMAIN + ".ws2.json", resp_data )
+                            guarda_fichero_respuesta_ws2(get_date_time() + "." + os.getenv("SUBDOMAIN") + ".ws2.json", resp_data )
                             procesaJsonEstudiantes(y, alumnos_sigad)
                             break
                         else: # Error  en la 2ª llamada
@@ -239,13 +240,13 @@ def main():
                 plantilla = plantilla_path.read_text(encoding="utf-8")
 
                 mensaje = plantilla.format(
-                    subdomain = SUBDOMAIN,
+                    subdomain = os.getenv("SUBDOMAIN"),
                     usuario = usuario,
                     oldUsuario = oldUsuario,
                 )
                 
                 destinatario = "gestion@fpvirtualaragon.es"
-                if SUBDOMAIN == "www":
+                if os.getenv("SUBDOMAIN") == "www":
                     destinatario = alumnoSIGAD.getEmailDominio().lower() 
                 else:
                     print("Debería haberse enviado a '", alumnoSIGAD.getEmailDominio().lower(), "'.", sep="" )
@@ -394,13 +395,13 @@ def main():
     escribeEnFichero(filename_csv, "First Name [Required],Last Name [Required],Email Address [Required],Password [Required],Password Hash Function [UPLOAD ONLY],Org Unit Path [Required],New Primary Email [UPLOAD ONLY],Recovery Email,Work Secondary Email,New Status [UPLOAD ONLY]")
     for alumno in alumnos_sigad:
 
-        if SUBDOMAIN == "www" and num_emails_enviados >= 1000: # limitacion de 2.000 emails diarios en actual cuenta de gmail
+        if os.getenv("SUBDOMAIN") == "www" and num_emails_enviados >= 1000: # limitacion de 2.000 emails diarios en actual cuenta de gmail
             escribeEnFichero(filename_md, "\nALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS")
             escribeEnFichero(filename_md, "ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS ")
             escribeEnFichero(filename_md, "ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS\n")
             break
 
-        if  SUBDOMAIN != "www" and num_emails_enviados >= 3: # limitacion de 10 emails para entornos que no sean producción.:
+        if  os.getenv("SUBDOMAIN") != "www" and num_emails_enviados >= 3: # limitacion de 10 emails para entornos que no sean producción.:
             escribeEnFichero(filename_md, "\nALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS")
             escribeEnFichero(filename_md, "ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS ")
             escribeEnFichero(filename_md, "ALCANZADO LÍMITE DE ENVÍO DE EMAILS DIARIOS\n")
@@ -498,7 +499,7 @@ def main():
             mensaje = plantilla.format(
                 nombre=nombre,
                 apellidos=apellidos,
-                subdomain=SUBDOMAIN,
+                subdomain=os.getenv("SUBDOMAIN"),
                 usuario=alumno.getDocumento().lower(),
                 contrasena=password,
                 matriculado_en_texto=matriculado_en_texto,
@@ -506,7 +507,7 @@ def main():
             )
             
             destinatario = "gestion@fpvirtualaragon.es"
-            if SUBDOMAIN == "www":
+            if os.getenv("SUBDOMAIN") == "www":
                 destinatario = alumno.getEmailSigad()
             else:
                 print("Debería haberse enviado a '", alumno.getEmailSigad(), "'." )
@@ -533,12 +534,12 @@ def main():
                 mensaje = plantilla.format(
                     nombre = nombre, 
                     apellidos = apellidos, 
-                    subdomain = SUBDOMAIN, 
+                    subdomain = os.getenv("SUBDOMAIN"), 
                     matriculado_en_texto = matriculado_en_texto,
                 )
 
                 destinatario = "gestion@fpvirtualaragon.es"
-                if SUBDOMAIN == "www":
+                if os.getenv("SUBDOMAIN") == "www":
                     destinatario = alumno.getEmailSigad()
                 else:
                     print("Debería haberse enviado a '", alumno.getEmailSigad(), "'." )
@@ -614,7 +615,7 @@ def main():
     plantilla = plantilla_path.read_text(encoding="utf-8")
 
     mensaje = plantilla.format(
-        subdomain = SUBDOMAIN,
+        subdomain = os.getenv("SUBDOMAIN"),
         filename_md = filename_md,
         filename_csv = filename_csv
     )
@@ -1031,7 +1032,7 @@ def guarda_fichero_respuesta_ws1(nombre_fichero, contenido):
     """
     print("guarda_fichero_respuesta_ws1(...)")
     data = json.loads(contenido.decode("utf-8"))
-    with open(PATH + "logs/" + SUBDOMAIN + "/json/" + nombre_fichero, "w", encoding="utf-8") as f:
+    with open(PATH + "logs/" + os.getenv("SUBDOMAIN") + "/json/" + nombre_fichero, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def guarda_fichero_respuesta_ws2(nombre_fichero, contenido):
@@ -1041,7 +1042,7 @@ def guarda_fichero_respuesta_ws2(nombre_fichero, contenido):
     print("guarda_fichero_respuesta(...)")
     data = json.loads(contenido.decode("utf-8"))
     data["estudiantes"] = json.loads(data["estudiantes"])
-    with open(PATH + "logs/" + SUBDOMAIN + "/json/" + nombre_fichero, "w", encoding="utf-8") as f:
+    with open(PATH + "logs/" + os.getenv("SUBDOMAIN") + "/json/" + nombre_fichero, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
@@ -1717,7 +1718,12 @@ def es_dni_valido(dni: str) -> bool:
 ###################################################
 ###################################################
 ###################################################
+
+
 try:
+    # Inicializar logger (se crea la carpeta log automáticamente)
+    logger = setup_logger()
+    load_dotenv()
     main()
 except Exception as exc:
     print("1.- traceback.print_exc()")
@@ -1727,11 +1733,11 @@ except Exception as exc:
     print("--------------------")
     print(exc)
 
-    plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/haFalladoElInforme.html")
+    plantilla_path = Path(LOCAL_PATH + "/templates/haFalladoElInforme.html")
     plantilla = plantilla_path.read_text(encoding="utf-8")
 
     mensaje = plantilla.format(
-        subdomain = SUBDOMAIN,
+        subdomain = os.getenv("MODO"),
         filename_md = filename_md,
         filename_csv = filename_csv,
         error = str(exc),
@@ -1739,6 +1745,18 @@ except Exception as exc:
         tracebackException = str(traceback.print_exception(*sys.exc_info())),
     )
 
-    emails = REPORT_TO.split()
+    emails = os.getenv("REPORT_TO").split()
     for email in emails:
         send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )
+
+
+## Ejemplo de uso de logger:
+# logger.debug("Iniciando aplicación")
+# logger.info("Conexión establecida")
+# logger.warning("Credenciales caducan en 7 días")
+# logger.error("Fallo en la API externa")
+
+# try:
+#    resultado = 10 / 0
+#except Exception:
+#    logger.exception("Error crítico en cálculo")  # Incluye traceback completo
