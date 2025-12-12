@@ -13,5 +13,5 @@ scripts/
 
 # permitir .env.example
 !.env.example
-.env
-.env.predesarrollo
+!.env.test
+.env.*
