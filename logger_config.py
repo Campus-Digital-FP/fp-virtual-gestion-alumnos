@@ -25,7 +25,7 @@ def _running_under_pytest() -> bool:
     """True si el proceso lo ha arrancado pytest"""
     return "pytest" in sys.modules or any("pytest" in arg for arg in sys.argv)
 
-def setup_logger(name: str = "mi_app") -> MarkdownLogger:
+def setup_logger(name: str = "gestion-alumnos") -> MarkdownLogger:
     # Registrar la clase de logger personalizada
     logging.setLoggerClass(MarkdownLogger)
 

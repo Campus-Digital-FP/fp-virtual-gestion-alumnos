@@ -24,9 +24,34 @@ from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 import re
+from logger_config import setup_logger
+from utils import api_client
+from dotenv import load_dotenv
 
 filename_md = "";
 filename_csv = "";
+
+LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
+
+def main_v1():
+    
+    directorio_script = LOCAL_PATH
+    print(f"El archivo main.py está en: {directorio_script}")
+
+    logger.markdown("# Informe de gestion alumnos")
+    logger.markdown(datetime.now().strftime("%d%m%Y_%H%M%S"))
+    logger.markdown("## ENTORNO")
+    logger.markdown(os.getenv("SUBDOMAIN"))
+    logger.markdown("## RESUMEN DETALLADO")
+
+    # ids de users creados en deploy que no hay que borrar
+    usuarios_moodle_no_borrables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 3725, 3729, 3730, 7152, 7490, 7491, 11720, 12270, 12272]
+
+    moodle = get_moodle(os.getenv("SUBDOMAIN"))[0]
+    alumnos_moodle = get_alumnos_moodle_no_borrados(moodle) # Alumnos que figuran en moodle antes de ejecutar el script
+
+
+
 
 def main():
 
@@ -1712,7 +1737,12 @@ def es_dni_valido(dni: str) -> bool:
 ###################################################
 ###################################################
 try:
-    main()
+    # Inicializar logger (se crea la carpeta log automáticamente) 
+    logger = setup_logger()   
+    logger.info("Inicio de la ejecución del script")
+    logger.info(".ENV: " + os.getenv("SUBDOMAIN")) 
+    main_v1()
+    
 except Exception as exc:
     print("1.- traceback.print_exc()")
     traceback.print_exc()
