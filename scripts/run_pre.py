@@ -1,10 +1,18 @@
 # scripts/run_pre.py
+import sys
+from pathlib import Path
+
+proyecto_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(proyecto_root))
+
 import os
 import errno
-from pathlib import Path
 from dotenv import load_dotenv
 from logger_config import logger   # logger global MarkdownLogger
 from main import main_v1
+
+proyecto_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(proyecto_root))
 
 logger.info("## Inicio de la ejecución del script GESTION ALUMNOS ##")
 
@@ -16,6 +24,7 @@ if ok:
     logger.info("✅ Cargado %s", dotenv_file.name)
 else:
     raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), dotenv_file)
+
 
 if __name__ == "__main__":
     main_v1()
