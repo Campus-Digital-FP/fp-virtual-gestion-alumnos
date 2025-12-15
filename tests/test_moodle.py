@@ -2,7 +2,7 @@
 import io
 import unittest
 from unittest.mock import patch
-from moodle import get_moodle  # Asegúrate de que moodle.py esté en el mismo directorio o ajusta el import
+from utils.moodle import get_moodle  # Asegúrate de que moodle.py esté en el mismo directorio o ajusta el import
 
 
 class TestGetMoodle(unittest.TestCase):
