@@ -36,7 +36,7 @@ def main_v1():
     logger.markdown("# Informe de gestion alumnos v1")
     logger.markdown(datetime.now().strftime("%d%m%Y_%H%M%S"))
     logger.markdown("## ENTORNO")
-    logger.markdown(os.getenv("SUBDOMAIN"))
+    logger.markdown(os.getenv("ENVIROMENT"))
     logger.markdown("## RESUMEN DETALLADO")
 
     api_client.main()
@@ -46,7 +46,6 @@ def main_v1():
   #  moodle = get_moodle(os.getenv("SUBDOMAIN"))[0]
   #  alumnos_moodle = get_alumnos_moodle_no_borrados(moodle) # Alumnos que figuran en moodle antes de ejecutar el script
 
-    return 1
 
 
 def main():
