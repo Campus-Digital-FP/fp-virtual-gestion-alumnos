@@ -10,7 +10,7 @@ packages = [{include = "scripts"}]
 
 [tool.poetry.scripts]
 test = "scripts.run_tests:main"
-pre = "scripts.run_pre:main_v1"
+pre = "scripts.run_pre:gestion_alumnos_v1"
 
 [tool.poetry.dependencies]
 python = "^3.10"

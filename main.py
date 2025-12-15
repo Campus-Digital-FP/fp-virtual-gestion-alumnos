@@ -32,7 +32,7 @@ filename_csv = "";
 
 LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
 
-def main_v1():  
+def gestion_alumnos_v1():  
     logger.markdown("# Informe de gestion alumnos v1")
     logger.markdown(datetime.now().strftime("%d%m%Y_%H%M%S"))
     logger.markdown("## ENTORNO")
@@ -48,7 +48,7 @@ def main_v1():
 
 
 
-def main():
+def gestion_alumnos():
 
     # Preparo el fichero log para escribir en él.
     global filename_md
@@ -1708,35 +1708,33 @@ def crearShortnameCurso(codigo_centro, siglas_ciclo, id_materia):
 
 
 ###################################################
-###################################################
-###################################################
 # Lanzamos!
 ###################################################
-###################################################
-###################################################
-#try:      
-#    main()
 
-#except Exception as exc:
-#    print("1.- traceback.print_exc()")
-#    traceback.print_exc()
-#    print("2.- traceback.print_exception(*sys.exc_info())")
-#    traceback.print_exception(*sys.exc_info())
-#    print("--------------------")
-#    print(exc)
-#
-#    plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/haFalladoElInforme.html")
-#    plantilla = plantilla_path.read_text(encoding="utf-8")
-#
-#    mensaje = plantilla.format(
-#        subdomain = SUBDOMAIN,
-#        filename_md = filename_md,
-#        filename_csv = filename_csv,
-#        error = str(exc),
-#        traceback = str(traceback.print_exc()),
-#        tracebackException = str(traceback.print_exception(*sys.exc_info())),
-#    )
-#
-#    emails = REPORT_TO.split()
-#    for email in emails:
-#        send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )
+def main():
+    try:
+        gestion_alumnos() 
+    except Exception as exc:
+        print("1.- traceback.print_exc()")
+        traceback.print_exc()
+        print("2.- traceback.print_exception(*sys.exc_info())")
+        traceback.print_exception(*sys.exc_info())
+        print("--------------------")
+        print(exc)
+    
+        plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/haFalladoElInforme.html")
+        plantilla = plantilla_path.read_text(encoding="utf-8")
+    
+        mensaje = plantilla.format(
+            subdomain = SUBDOMAIN,
+            filename_md = filename_md,
+            filename_csv = filename_csv,
+            error = str(exc),
+            traceback = str(traceback.print_exc()),
+            tracebackException = str(traceback.print_exception(*sys.exc_info())),
+        )
+    
+        emails = REPORT_TO.split()
+        for email in emails:
+            send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )
+    
