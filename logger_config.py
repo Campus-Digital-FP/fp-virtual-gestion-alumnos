@@ -1,3 +1,4 @@
+# logger_config.py
 import logging
 import sys
 from pathlib import Path
@@ -6,37 +7,39 @@ from datetime import datetime
 # 1️⃣ Nivel de log personalizado para Markdown
 MARKDOWN_LEVEL = 25  # Entre INFO (20) y WARNING (30)
 
+
 class MarkdownLogger(logging.Logger):
     """Logger con método markdown() exclusivo"""
     def markdown(self, message, *args, **kwargs):
         self.log(MARKDOWN_LEVEL, message, *args, **kwargs)
+
 
 class MarkdownFilter(logging.Filter):
     """Filtro que solo pasa los logs de nivel MARKDOWN"""
     def filter(self, record):
         return record.levelno == MARKDOWN_LEVEL
 
+
 class MarkdownFormatter(logging.Formatter):
     """Convierte solo los mensajes markdown a formato MD"""
     def format(self, record):
         return f"- 📝 **Informe:** {record.getMessage()}\n"
 
+
 def _running_under_pytest() -> bool:
     """True si el proceso lo ha arrancado pytest"""
     return "pytest" in sys.modules or any("pytest" in arg for arg in sys.argv)
+
 
 def setup_logger(name: str = "gestion-alumnos") -> MarkdownLogger:
     # Registrar la clase de logger personalizada
     logging.setLoggerClass(MarkdownLogger)
 
     project_root = Path(__file__).parent.resolve()
-    log_dir = project_root / "logs"  # ← carpeta /logs
+    log_dir = project_root / "logs"
     log_dir.mkdir(mode=0o755, exist_ok=True)
 
-    # Fecha en formato dd-mm-yyyy
     timestamp = datetime.now().strftime("%d-%m-%Y_%H%M%S")
-
-    # Sufijo para tests
     suffix = "_test" if _running_under_pytest() else ""
 
     logger = logging.getLogger(name)
@@ -68,3 +71,11 @@ def setup_logger(name: str = "gestion-alumnos") -> MarkdownLogger:
     logger.addHandler(console_handler)
 
     return logger
+
+
+# ------------------------------------------------------------------
+# Logger ÚNICO global (configurado solo la primera vez)
+# ------------------------------------------------------------------
+logger = setup_logger("gestion-alumnos")
+   
+    

@@ -24,33 +24,29 @@ from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 import re
-from logger_config import setup_logger
-from utils import api_client
-from dotenv import load_dotenv
+from logger_config import logger
+from utils import api_client, utils
 
 filename_md = "";
 filename_csv = "";
 
 LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
 
-def main_v1():
-    
-    directorio_script = LOCAL_PATH
-    print(f"El archivo main.py está en: {directorio_script}")
-
-    logger.markdown("# Informe de gestion alumnos")
+def main_v1():  
+    logger.markdown("# Informe de gestion alumnos v1")
     logger.markdown(datetime.now().strftime("%d%m%Y_%H%M%S"))
     logger.markdown("## ENTORNO")
     logger.markdown(os.getenv("SUBDOMAIN"))
     logger.markdown("## RESUMEN DETALLADO")
 
+    api_client.main()
     # ids de users creados en deploy que no hay que borrar
     usuarios_moodle_no_borrables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 3725, 3729, 3730, 7152, 7490, 7491, 11720, 12270, 12272]
 
-    moodle = get_moodle(os.getenv("SUBDOMAIN"))[0]
-    alumnos_moodle = get_alumnos_moodle_no_borrados(moodle) # Alumnos que figuran en moodle antes de ejecutar el script
+  #  moodle = get_moodle(os.getenv("SUBDOMAIN"))[0]
+  #  alumnos_moodle = get_alumnos_moodle_no_borrados(moodle) # Alumnos que figuran en moodle antes de ejecutar el script
 
-
+    return 1
 
 
 def main():
@@ -110,7 +106,7 @@ def main():
     # --
     # Transformo JSON de SIGAD a lista
     #########################################
-
+# TODO DARIO: Todo lo que se encuentra a continuación, se resuelve con api_client.py
     procesa_desde_fichero = False # Procesa desde fichero en lugar del ws
     if procesa_desde_fichero:
         with open(PATH + "jsons/20250925_01.json", "r", encoding="utf-8") as f:
@@ -157,7 +153,7 @@ def main():
             else: # Error en la 1era llamada
                 print("Error en la llamada al 1er web service")
 
-    
+## TODO: Dario - HASTA AQUÍ  
 
     ########################
     # Obtengo los alumnos (profesores no) que están suspendidos en moodle y miro si están en el fichero de SIGAD
@@ -237,8 +233,8 @@ def main():
             # Si el alumno ha pasado de un NIE a un DNI en SIGAD se lo actualizo el usuario en moodle
             if alumnoSIGAD.getEmailSigad() is not None \
                     and alumnoSIGAD.getDocumento() is not None \
-                    and es_nie_valido(alumnoMoodle['username']) \
-                    and es_dni_valido(alumnoSIGAD.getDocumento()) \
+                    and utils.es_nie_valido(alumnoMoodle['username']) \
+                    and utils.es_dni_valido(alumnoSIGAD.getDocumento()) \
                     and alumnoMoodle['email_sigad'].lower() == alumnoSIGAD.getEmailSigad().lower(): 
                 existe = True
                 print("Alumno a actualizar su login por coincidencia de email: '", repr(alumnoMoodle),"'", sep="" )
@@ -1711,23 +1707,6 @@ def crearShortnameCurso(codigo_centro, siglas_ciclo, id_materia):
     # End of crearShortnameCurso
     #
 
-def es_nie_valido(nie: str) -> bool:
-    """
-    Devuelve True si el formato del string corresponde a un NIE válido.
-    Formato: Letra inicial X, Y o Z + 7 dígitos + letra final (A-Z)
-    """
-    nie = nie.upper().strip()
-    patron = r'^[XYZ]\d{7}[A-Z]$'
-    return bool(re.match(patron, nie))
-
-def es_dni_valido(dni: str) -> bool:
-    """
-    Devuelve True si el string tiene formato y letra de control válidos de un DNI español.
-    Formato válido: 8 dígitos seguidos de una letra mayúscula (sin espacios ni guiones).
-    """
-    dni = dni.upper().strip()
-    patron = r'^\d{8}[A-Z]$'
-    return bool(re.match(patron, dni))
 
 ###################################################
 ###################################################
@@ -1736,33 +1715,29 @@ def es_dni_valido(dni: str) -> bool:
 ###################################################
 ###################################################
 ###################################################
-try:
-    # Inicializar logger (se crea la carpeta log automáticamente) 
-    logger = setup_logger()   
-    logger.info("Inicio de la ejecución del script")
-    logger.info(".ENV: " + os.getenv("SUBDOMAIN")) 
-    main_v1()
-    
-except Exception as exc:
-    print("1.- traceback.print_exc()")
-    traceback.print_exc()
-    print("2.- traceback.print_exception(*sys.exc_info())")
-    traceback.print_exception(*sys.exc_info())
-    print("--------------------")
-    print(exc)
+#try:      
+#    main()
 
-    plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/haFalladoElInforme.html")
-    plantilla = plantilla_path.read_text(encoding="utf-8")
-
-    mensaje = plantilla.format(
-        subdomain = SUBDOMAIN,
-        filename_md = filename_md,
-        filename_csv = filename_csv,
-        error = str(exc),
-        traceback = str(traceback.print_exc()),
-        tracebackException = str(traceback.print_exception(*sys.exc_info())),
-    )
-
-    emails = REPORT_TO.split()
-    for email in emails:
-        send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )
+#except Exception as exc:
+#    print("1.- traceback.print_exc()")
+#    traceback.print_exc()
+#    print("2.- traceback.print_exception(*sys.exc_info())")
+#    traceback.print_exception(*sys.exc_info())
+#    print("--------------------")
+#    print(exc)
+#
+#    plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/haFalladoElInforme.html")
+#    plantilla = plantilla_path.read_text(encoding="utf-8")
+#
+#    mensaje = plantilla.format(
+#        subdomain = SUBDOMAIN,
+#        filename_md = filename_md,
+#        filename_csv = filename_csv,
+#        error = str(exc),
+#        traceback = str(traceback.print_exc()),
+#        tracebackException = str(traceback.print_exception(*sys.exc_info())),
+#    )
+#
+#    emails = REPORT_TO.split()
+#    for email in emails:
+#        send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )

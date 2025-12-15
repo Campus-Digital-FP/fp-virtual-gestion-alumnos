@@ -1,7 +1,5 @@
 import subprocess
-import logging
-
-logger = logging.getLogger(__name__)  # __name__ = "utils.api_client"
+from logger_config import logger
 
 def run_moosh_command(moodle, command, capture=False, timeout=10):
     logger.info("run_moosh_command(...)")

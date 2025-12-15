@@ -1,16 +1,14 @@
 import io
 import os
 from utils.moosh import run_moosh_command, run_command
-import logging
+from logger_config import logger
 
-logger = logging.getLogger(__name__)  # __name__ = "utils.api_client"
 
-"""
-Devuelve un objeto como el siguiente:
-    #
-"""
 def get_moodle(subdomain):
+    """
+    Devuelve un objeto como el siguiente:
     
+    """
     logger.info("get_moodle(subdomain: ",subdomain,")", sep="")
     
     data = os.popen(f"docker ps | grep {subdomain}").read()

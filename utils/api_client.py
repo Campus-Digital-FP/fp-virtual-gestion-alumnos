@@ -2,10 +2,8 @@ import requests
 import json
 import time
 import os
-import logging
 from datetime import datetime
-
-logger = logging.getLogger(__name__)  # __name__ = "utils.api_client"
+from logger_config import logger
 
 BASE_URL = os.getenv("API_BASE_URL", "https://aplicaciones.aragon.es/pcrpe/services/alumnosFPDistancia")
 
@@ -51,7 +49,7 @@ def obtener_estudiantes(usuario: str, password: str, id_solicitud: int,
     }
 
     for intento in range(1, reintentos + 1):
-        logger.info("📡 ({intento}/{reintentos}) Solicitando fichero de estudiantes...")
+        logger.info(f"📡 ({intento}/{reintentos}) Solicitando fichero de estudiantes...")
         response = requests.get(url, headers=headers)
         response.raise_for_status()
 
@@ -61,7 +59,7 @@ def obtener_estudiantes(usuario: str, password: str, id_solicitud: int,
         # ✅ Caso correcto
         if codigo == 0:
             estudiantes_json = json.loads(data["estudiantes"])
-            logger.info("✅ Fichero recibido correctamente con {len(estudiantes_json.get('alumnos', []))} registros")
+            logger.info(f"✅ Fichero recibido correctamente con {len(estudiantes_json.get('alumnos', []))} registros")
             return estudiantes_json
 
         # ⚠️ Caso transitorio: fichero aún no preparado
@@ -80,13 +78,13 @@ def obtener_estudiantes(usuario: str, password: str, id_solicitud: int,
     raise RuntimeError("❌ Error inesperado: no se obtuvo respuesta válida.")
 
 def main():
-    logger.info("=== Conexión con FP Distancia Aragón ===")
+    logger.info("=== api_client.py Conexión con FP Distancia Aragón ===")
     
     usuario = os.getenv("API_USER")
     password = os.getenv("API_PASSWORD")
     if not usuario or not password:
         logger.error("Faltan API_USER y/o API_PASSWORD")
-        return          # ← importante: salir sin llamar a la API
+        return         
 
     try:
         # 1️⃣ Solicitud inicial
