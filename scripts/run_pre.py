@@ -1,0 +1,21 @@
+# scripts/run_pre.py
+import os
+import errno
+from pathlib import Path
+from dotenv import load_dotenv
+from logger_config import logger   # logger global MarkdownLogger
+from main import main_v1
+
+logger.info("## Inicio de la ejecución del script GESTION ALUMNOS ##")
+
+env = os.getenv("APP_ENV", "preproduccion")
+dotenv_file = Path(f".env.{env}").resolve()
+ok = load_dotenv(dotenv_path=dotenv_file, override=True)
+
+if ok:
+    logger.info("✅ Cargado %s", dotenv_file.name)
+else:
+    raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), dotenv_file)
+
+if __name__ == "__main__":
+    main_v1()

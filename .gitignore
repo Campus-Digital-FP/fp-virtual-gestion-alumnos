@@ -9,7 +9,6 @@ logs/*
 classes/__pycache__/*
 jsons/
 csvs/
-scripts/
 
 # no subir resultados de tests
 tests/__pycache__/*
