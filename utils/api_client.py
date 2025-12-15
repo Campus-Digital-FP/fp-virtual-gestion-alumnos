@@ -1,11 +1,12 @@
-import requests
-import json
-import time
-import os
+import json, requests, time, os
+from pathlib import Path
 from datetime import datetime
 from logger_config import logger
 
 BASE_URL = os.getenv("API_BASE_URL", "https://aplicaciones.aragon.es/pcrpe/services/alumnosFPDistancia")
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+# --- Crear directorio si no existe
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 """
     Realiza la primera solicitud y devuelve el JSON con el idSolicitud.
@@ -59,14 +60,15 @@ def obtener_estudiantes(usuario: str, password: str, id_solicitud: int,
         # ✅ Caso correcto
         if codigo == 0:
             estudiantes_json = json.loads(data["estudiantes"])
-            logger.info(f"✅ Fichero recibido correctamente con {len(estudiantes_json.get('alumnos', []))} registros")
+            logger.info(f"✅ Fichero recibido correctamente con {len(estudiantes_json.get('alumnos', []))} registros")         
+
             return estudiantes_json
 
         # ⚠️ Caso transitorio: fichero aún no preparado
         if codigo == -1:
             print(f"⚠️ El fichero aún no está listo: {data.get('mensaje')}")
             if intento < reintentos:
-                logger.info("⏳ Reintentando en {espera} segundos...")
+                logger.info(f"⏳ Reintentando en {espera} segundos...")
                 time.sleep(espera)
                 continue
             else:
@@ -100,10 +102,11 @@ def main():
 
         # 3️⃣ Guardar resultados
         nombre_fichero = f"estudiantes_{id_solicitud}.json"
-        with open(nombre_fichero, "w", encoding="utf-8") as f:
+
+        with open(DATA_DIR / nombre_fichero, "w", encoding="utf-8") as f:
             json.dump(estudiantes, f, ensure_ascii=False, indent=2)
 
-        logger.info(f"\n✅ Datos guardados correctamente en {nombre_fichero}")       
+        logger.info(f"\n✅ Datos guardados correctamente en /data/{nombre_fichero}")       
 
     except Exception as e:
         logger.info(f"\n❌ Error: {e}")

@@ -20,3 +20,6 @@ utils/__pycache__/*
 !.env.example
 !.env.test
 .env.*
+
+# no subimos datos recuperados de la API
+data/*
