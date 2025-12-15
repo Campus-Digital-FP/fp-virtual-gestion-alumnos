@@ -9,7 +9,7 @@ def get_moodle(subdomain):
     Devuelve un objeto como el siguiente:
     
     """
-    logger.info("get_moodle(subdomain: ",subdomain,")", sep="")
+    logger.info(f"get_moodle(subdomain: ",subdomain,")", sep="")
     
     data = os.popen(f"docker ps | grep {subdomain}").read()
     data_s = io.StringIO(data).read()
