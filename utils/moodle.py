@@ -74,3 +74,6 @@ def get_alumnos_moodle_no_borrados(moodle):
     
     # Devuelvo el listado de alumnos que cumplen las condiciones
     return alumnos
+
+def get_alumnos_moodle_no_borrados_v1(moodle):
+
