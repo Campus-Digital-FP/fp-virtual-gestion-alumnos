@@ -93,13 +93,13 @@ def gestion_alumnos():
     global filename_md
     print("Comenzamos con el fichero")
     datetimeForFilename = get_date_time_for_filename()
-    print("filename: " + datetimeForFilename)
-    filename_md = "/var/fp-distancia-gestion-usuarios-automatica/logs/" + SUBDOMAIN + "/html/" + datetimeForFilename + SUBDOMAIN + ".md"
+    print("filename: " + datetimeForFilename)    
+    filename_md = PATH + "/logs/" + SUBDOMAIN + "/html/" + datetimeForFilename + SUBDOMAIN + ".md"
     print("filename_md: " + filename_md)
 
     ## Preparao el fichero csv para escribir en él.
     global filename_csv
-    filename_csv = "/var/fp-distancia-gestion-usuarios-automatica/csvs/" + datetimeForFilename + SUBDOMAIN + ".csv"
+    filename_csv = PATH + "/csvs/" + datetimeForFilename + SUBDOMAIN + ".csv"
     print("filename_csv: " + filename_csv)
     
     #
@@ -288,7 +288,7 @@ def gestion_alumnos():
                 usuario = alumnoSIGAD.getDocumento()
                 oldUsuario = alumnoMoodle['username']
 
-                plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/nombreUsuarioActualizado.html")
+                plantilla_path = Path(PATH + "/templates/nombreUsuarioActualizado.html")
                 plantilla = plantilla_path.read_text(encoding="utf-8")
 
                 mensaje = plantilla.format(
@@ -545,7 +545,7 @@ def gestion_alumnos():
             nombre = alumno.getNombre()
             apellidos = alumno.getApellidos()
 
-            plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/nuevoUsuario.html")
+            plantilla_path = Path(PATH + "/templates/nuevoUsuario.html")
             plantilla = plantilla_path.read_text(encoding="utf-8")
             
             mensaje = plantilla.format(
@@ -580,7 +580,7 @@ def gestion_alumnos():
                 nombre = alumno.getNombre()
                 apellidos = alumno.getApellidos()
 
-                plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/matriculasAnadidas.html")
+                plantilla_path = Path(PATH + "/templates/matriculasAnadidas.html")
                 plantilla = plantilla_path.read_text(encoding="utf-8")
 
                 mensaje = plantilla.format(
@@ -663,7 +663,7 @@ def gestion_alumnos():
     time.sleep(5)
     print("Printed after 5 seconds.")
 
-    plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/informeAutomatizado.html")
+    plantilla_path = Path(PATH + "/templates/informeAutomatizado.html")
     plantilla = plantilla_path.read_text(encoding="utf-8")
 
     mensaje = plantilla.format(
@@ -1761,7 +1761,7 @@ def main():
         print("--------------------")
         print(exc)
     
-        plantilla_path = Path("/var/fp-distancia-gestion-usuarios-automatica/templates/haFalladoElInforme.html")
+        plantilla_path = Path(PATH + "/templates/haFalladoElInforme.html")
         plantilla = plantilla_path.read_text(encoding="utf-8")
     
         mensaje = plantilla.format(
