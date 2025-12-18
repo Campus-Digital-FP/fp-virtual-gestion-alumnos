@@ -4,6 +4,7 @@ from pathlib import Path
 from logger_config import logger
 from models import Registro
 from .parser import parse_json
+from classes import Alumno, Centro, Ciclo, Modulo
 
 _DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
@@ -14,12 +15,12 @@ def _extraer_numero(fichero: Path) -> int:
 
 def cargar_fichero_estudiantes() -> Registro:
     """
-    Carga el primer fichero /data/estudiantes_XXXX.json que encuentre.
-    :return: diccionario con los datos del fichero
+    Carga el fichero /data/estudiantes_XXXX.json cuyo XXXX sea mayor.
+    Si ENVIRONMENT (case-insensitive) es 'produccion' borra el resto de .json después de cargar.
+    :return: Registro con los datos parseados
     :raises FileNotFoundError: si no existe ningún fichero que encaje
     """
-    
-     # 1. Buscar todos los estudiantes_*.json
+    # 1. Buscar todos los estudiantes_*.json
     candidatos = list(_DATA_DIR.glob("estudiantes_*.json"))
     if not candidatos:
         raise FileNotFoundError("No existe ningún fichero /data/estudiantes_XXXX.json")
@@ -30,15 +31,14 @@ def cargar_fichero_estudiantes() -> Registro:
 
     # 3. Cargar contenido
     with fichero_elegido.open(encoding="utf-8") as f:
-        logger.info("Fichero de estudiantes cargado correctamente.")
+        logger.info(f"Fichero de estudiantes cargado correctamente: " + fichero_elegido)
         datos = json.load(f)
 
-    # 4. Borrar todos los .json si estamos en producción que pudiera haber
-    # para evitar reutilizar datos antiguos.
-    # En PREPRODUCCIÓN o TEST no se borran para facilitar las pruebas.
-    if os.getenv("ENVIRONMENT") == "PRODUCCION":
+    # 4. Borrar todos los .json si estamos en PRODUCCIÓN (case-insensitive)
+    if os.getenv("ENVIRONMENT", "").lower() == "produccion":
         for f_json in _DATA_DIR.glob("*.json"):
-            f_json.unlink(missing_ok=True)
+            if f_json != fichero_elegido:          # opcional: preservar el que acabamos de usar
+                f_json.unlink(missing_ok=True)
 
     return parse_json(datos)
         
