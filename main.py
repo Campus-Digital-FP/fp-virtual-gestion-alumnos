@@ -25,7 +25,7 @@ from email import encoders
 from pathlib import Path
 import re
 from logger_config import logger
-from utils import api_client, utils
+from utils import api_client, utils, json_parser
 
 filename_md = "";
 filename_csv = "";
@@ -33,19 +33,53 @@ filename_csv = "";
 LOCAL_PATH = os.path.dirname(os.path.abspath(__file__))
 
 def gestion_alumnos_v1():  
-    logger.markdown("# Informe de gestion alumnos v1")
-    logger.markdown(datetime.now().strftime("%d%m%Y_%H%M%S"))
-    logger.markdown("## ENTORNO")
-    logger.markdown(os.getenv("ENVIROMENT"))
-    logger.markdown("## RESUMEN DETALLADO")
+    logger.info("# Informe de gestion alumnos v1")
+    logger.info(f"Fecha de informe: " + datetime.now().strftime("%d-%m-%Y_%H:%M:%S"))
+    logger.info(f"## ENTORNO: "+ os.getenv("ENVIROMENT"))
+    logger.info("## RESUMEN DETALLADO ---------------------------------------------")
 
-    api_client.main()
     # ids de users creados en deploy que no hay que borrar
     usuarios_moodle_no_borrables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 3725, 3729, 3730, 7152, 7490, 7491, 11720, 12270, 12272]
 
   #  moodle = get_moodle(os.getenv("SUBDOMAIN"))[0]
   #  alumnos_moodle = get_alumnos_moodle_no_borrados(moodle) # Alumnos que figuran en moodle antes de ejecutar el script
 
+    ## Necesidades y pasos del procedimiento:
+    ## 1. Diccionario de contadores
+    reportes: dict[str, int] = {
+    "pre_app": 0,
+    "post_script": 0,
+    "suspendidos": 0,
+    "reactivados": 0,
+    "modificado_login": 0,
+    "modificado_email": 0,
+    "creados": 0,
+    "no_creables": 0,
+    "modulos_matriculados": 0,
+    "matriculas_suspendidas": 0,
+    "matriculas_reactivadas": 0,
+    "matriculas_borradas": 0,
+    "no_matriculados_en_cursos_inexistentes": 0,
+    "emails_enviados": 0,
+    "emails_no_enviados": 0,
+    "tutorias_suspendidas": 0
+    } 
+    ## 2. Obtener los alumnos actuales en sigad
+    logger.info("## 1. Recuperación de todo el alumnado matriculado en SIGAD")
+    nombre_fichero = api_client.main()
+    logger.info(f"### Datos recuperados en: \" "+ nombre_fichero+"\"")
+    registro_sigad = json_parser.cargar_fichero_estudiantes()
+
+    ## 3. 
+
+    alumnado_moodle = []
+    #  TODO Darío alumnado_moodle = get_alumnado_moodle()
+    reportes["pre_app"] = len(alumnado_moodle)
+    #  TODO Darío alumnado_sigad 
+    
+
+    #  TODO Darío alumnado_suspendido = get_alumnado_suspendido() Usándo índices en la BD, Kimi
+    
 
 
 def gestion_alumnos():

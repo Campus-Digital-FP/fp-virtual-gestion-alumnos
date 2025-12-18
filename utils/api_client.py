@@ -79,14 +79,14 @@ def obtener_estudiantes(usuario: str, password: str, id_solicitud: int,
 
     raise RuntimeError("❌ Error inesperado: no se obtuvo respuesta válida.")
 
-def main():
+def main() -> str:
     logger.info("=== api_client.py Conexión con FP Distancia Aragón ===")
     
     usuario = os.getenv("API_USER")
     password = os.getenv("API_PASSWORD")
     if not usuario or not password:
         logger.error("Faltan API_USER y/o API_PASSWORD")
-        return         
+        return ""        
 
     try:
         # 1️⃣ Solicitud inicial
@@ -106,10 +106,12 @@ def main():
         with open(DATA_DIR / nombre_fichero, "w", encoding="utf-8") as f:
             json.dump(estudiantes, f, ensure_ascii=False, indent=2)
 
-        logger.info(f"\n✅ Datos guardados correctamente en /data/{nombre_fichero}")       
+        logger.info(f"\n✅ Datos guardados correctamente en /data/{nombre_fichero}") 
+        return nombre_fichero      
 
     except Exception as e:
-        logger.info(f"\n❌ Error: {e}")
+        logger.info(f"\n❌ Error: {e}")     
+
 
 if __name__ == "__main__":
     main()
