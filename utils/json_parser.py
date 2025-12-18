@@ -27,11 +27,11 @@ def cargar_fichero_estudiantes() -> Registro:
 
     # 2. Quedarse con el de número mayor
     fichero_elegido = max(candidatos, key=_extraer_numero)
-    logger.info("Cargando fichero de estudiantes...")
+    logger.info("Cargando fichero de estudiantes... ")
 
     # 3. Cargar contenido
     with fichero_elegido.open(encoding="utf-8") as f:
-        logger.info(f"Fichero de estudiantes cargado correctamente: " + fichero_elegido)
+        logger.info("Fichero de estudiantes cargado correctamente: " + fichero_elegido._str)
         datos = json.load(f)
 
     # 4. Borrar todos los .json si estamos en PRODUCCIÓN (case-insensitive)
