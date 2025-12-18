@@ -12,7 +12,7 @@ packages = [{include = "scripts"}]
 test = "scripts.run_tests:main"
 dev = "scripts.run_pre:gestion_alumnos_v1"
 pre = "scripts.run_pre:main"
-pro = "scripts.run_pre:main"
+pro = "scripts.run_pro:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -34,7 +34,6 @@ pam = "^0.2.0"
 pexpect = "^4.9.0"
 pillow = "^12.0.0"
 py3dns = "^4.0.2"
-pycairo = "^1.29.0"
 pycurl = "^7.45.7"
 python-dotenv = "^1.2.1"
 requests = "^2.32.5"

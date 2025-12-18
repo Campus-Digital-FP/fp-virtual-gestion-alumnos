@@ -28,8 +28,7 @@ def fake_estudiantes_dict():
 def test_solicitar_datos_ok(fake_creds, requests_mock):
     """La primera llamada devuelve idSolicitud sin problemas."""
     requests_mock.get(
-        "https://aplicaciones.aragon.es/pcrpe/services/alumnosFPDistancia"
-        f"/solicitud/{datetime.now().year}",
+        f"https://aplicaciones.aragon.es/pcrpe/services/alumnosFPDistancia/solicitud/{datetime.now().year}",
         json={"codigo": 0, "idSolicitud": 1234},
     )
     data = solicitar_datos("test_user", "test_pass")
