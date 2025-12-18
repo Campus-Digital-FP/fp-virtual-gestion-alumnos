@@ -9,7 +9,7 @@ import os
 import errno
 from dotenv import load_dotenv
 from logger_config import logger   # logger global MarkdownLogger
-from main import gestion_alumnos_v1
+from main import gestion_alumnos
 
 proyecto_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(proyecto_root))
@@ -25,6 +25,8 @@ if ok:
 else:
     raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), dotenv_file)
 
+def main():
+    gestion_alumnos()
 
 if __name__ == "__main__":
-    gestion_alumnos_v1()
+    gestion_alumnos()
