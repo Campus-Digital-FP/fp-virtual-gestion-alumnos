@@ -69,17 +69,22 @@ def gestion_alumnos_v1():
     nombre_fichero = api_client.main()
     logger.info(f"### Datos recuperados en: \" "+ nombre_fichero+"\"")
     registro_sigad = json_parser.cargar_fichero_estudiantes()
-
-    ## 3. 
+    # ----------------------------------------------
+    ## REINCORPORACION: Un alumno puede estar suspendido en moodle y que ahora aparezca en sigad -> Dar de alta 
+    ## ACTUALIZACION_EMAIL: Un alumno ha cambiado su email en sigad -> Modificarlo en moodle
+    ## CAMBIO_NIE_A_DNI: Cuidado! 
+    ## ACTUALIZACION_CURSOS:
+    ##     BAJAS_COMPLETAS
+    ##     BAJAS_EN_MODULOS
+    ##     ALTAS_EN_MODULOS
+    ##     NUEVAS_ALTAS
+    ##     LIMPIEZA_AGOSTO
+    # -----------------------------------------------------------------------------
 
     alumnado_moodle = []
     #  TODO Darío alumnado_moodle = get_alumnado_moodle()
     reportes["pre_app"] = len(alumnado_moodle)
-    #  TODO Darío alumnado_sigad 
-    
-
-    #  TODO Darío alumnado_suspendido = get_alumnado_suspendido() Usándo índices en la BD, Kimi
-    
+        
 
 
 def gestion_alumnos():
