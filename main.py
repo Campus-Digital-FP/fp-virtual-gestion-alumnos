@@ -1776,4 +1776,6 @@ def main():
         emails = REPORT_TO.split()
         for email in emails:
             send_email_con_adjuntos("gestion@fpvirtualaragon.es", "ERROR - Informe automatizado gestión automática usuarios moodle", mensaje, [filename_md, filename_csv] )
-    
+
+if __name__ == "__main__":
+    main()
