@@ -69,8 +69,13 @@ def gestion_alumnos_v1():
     nombre_fichero = api_client.main()
     logger.info(f"### Datos recuperados en: \" "+ nombre_fichero+"\"")
     registro_sigad = json_parser.cargar_fichero_estudiantes()
+
+    logger.info(f"### Total de alumnos recuperados de SIGAD: " + str(len(registro_sigad.alumnos)) )
+    reportes["pre_app"] = len(registro_sigad.alumnos)
+
     # ----------------------------------------------
     ## REINCORPORACION: Un alumno puede estar suspendido en moodle y que ahora aparezca en sigad -> Dar de alta 
+    
     ## ACTUALIZACION_EMAIL: Un alumno ha cambiado su email en sigad -> Modificarlo en moodle
     ## CAMBIO_NIE_A_DNI: Cuidado! 
     ## ACTUALIZACION_CURSOS:
@@ -81,9 +86,7 @@ def gestion_alumnos_v1():
     ##     LIMPIEZA_AGOSTO
     # -----------------------------------------------------------------------------
 
-    alumnado_moodle = []
-    #  TODO Darío alumnado_moodle = get_alumnado_moodle()
-    reportes["pre_app"] = len(alumnado_moodle)
+   
         
 
 
